@@ -568,6 +568,16 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <div class="share-container">
+          <button class="share-button" aria-label="Share this activity">
+            <span aria-hidden="true">&#8679;</span> Share
+          </button>
+          <div class="share-dropdown hidden">
+            <a class="share-option share-twitter" href="#" aria-label="Share on Twitter"><span aria-hidden="true">&#120143;</span> Twitter</a>
+            <a class="share-option share-facebook" href="#" aria-label="Share on Facebook"><span aria-hidden="true">&#9744;</span> Facebook</a>
+            <button class="share-option share-copy" aria-label="Copy activity link"><span aria-hidden="true">&#128279;</span> Copy Link</button>
+          </div>
+        </div>
       </div>
     `;
 
@@ -586,6 +596,44 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add share button handlers
+    const shareButton = activityCard.querySelector(".share-button");
+    const shareDropdown = activityCard.querySelector(".share-dropdown");
+
+    shareButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      // Close any other open share dropdowns
+      document.querySelectorAll(".share-dropdown:not(.hidden)").forEach((d) => {
+        if (d !== shareDropdown) d.classList.add("hidden");
+      });
+      shareDropdown.classList.toggle("hidden");
+    });
+
+    activityCard.querySelector(".share-twitter").addEventListener("click", (event) => {
+      event.preventDefault();
+      const text = `Check out ${name} at Mergington High School! ${details.description}`;
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+      shareDropdown.classList.add("hidden");
+    });
+
+    activityCard.querySelector(".share-facebook").addEventListener("click", (event) => {
+      event.preventDefault();
+      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(name + ": " + details.description)}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+      shareDropdown.classList.add("hidden");
+    });
+
+    activityCard.querySelector(".share-copy").addEventListener("click", () => {
+      const shareText = `${name} - ${details.description} | Schedule: ${formatSchedule(details)} | ${window.location.href}`;
+      navigator.clipboard.writeText(shareText).then(() => {
+        showMessage("Activity link copied to clipboard!", "success");
+      }).catch(() => {
+        showMessage("Unable to copy link. Please select and copy the page address manually.", "error");
+      });
+      shareDropdown.classList.add("hidden");
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -853,6 +901,13 @@ document.addEventListener("DOMContentLoaded", () => {
       showMessage("Failed to sign up. Please try again.", "error");
       console.error("Error signing up:", error);
     }
+  });
+
+  // Close share dropdowns when clicking outside
+  window.addEventListener("click", () => {
+    document.querySelectorAll(".share-dropdown:not(.hidden)").forEach((d) => {
+      d.classList.add("hidden");
+    });
   });
 
   // Expose filter functions to window for future UI control

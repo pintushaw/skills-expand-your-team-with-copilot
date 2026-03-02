@@ -614,11 +614,29 @@ footer {
   }
 }
 
+/* Dark mode styles */
+body.dark-mode {
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --border: #333333;
+  --border-light: #2a2a2a;
+  --border-focus: #444444;
+  --success-light: #1b3a1c;
+  --warning-light: #3a2e00;
+  --error-light: #3a0a0a;
+  --info-light: #0a2530;
+}
+
 /* User controls in header */
 #user-controls {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #user-status {
